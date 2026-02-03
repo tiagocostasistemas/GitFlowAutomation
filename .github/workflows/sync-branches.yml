@@ -3,14 +3,14 @@ name: Global Sync Workflow
 on:
   push:
     branches:
-      - master
+      - main
       - homologation
   workflow_dispatch:
 
 jobs:
-  # Job 1: Master -> Homologation (Only runs if push is on master)
+  # Job 1: main -> Homologation (Only runs if push is on main)
   sync-homologation:
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,13 +23,13 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge Master into Homologation
+      - name: Merge main into homologation
         run: |
           git checkout homologation
-          git merge origin/master --no-ff -m "Auto-merge master into homologation"
+          git merge origin/main --no-ff -m "Auto-merge main into homologation"
           git push origin homologation
 
-  # Job 2: Sync Develop (Runs for push on either master or homologation)
+  # Job 2: Sync Develop (Runs for push on either main or homologation)
   sync-develop:
     runs-on: ubuntu-latest
     steps:
@@ -49,7 +49,7 @@ jobs:
           git merge origin/${{ github.ref_name }} --no-ff -m "Auto-merge ${{ github.ref_name }} into develop"
           git push origin develop
 
-  # Job 3: Sync QA (Runs for push on either master or homologation)
+  # Job 3: Sync QA (Runs for push on either main or homologation)
   sync-qa:
     runs-on: ubuntu-latest
     steps:
